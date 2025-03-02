@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Thumbnail Downloader</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    
+    h1 {
+      text-align: center;
+      color: #ff0000;
+      margin-bottom: 30px;
+    }
+    
+    .container {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .input-section {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    
+    #get-thumbnail {
+      background-color: #ff0000;
+      color: white;
+    }
+    
+    #get-thumbnail:hover {
+      background-color: #cc0000;
+    }
+    
+    #result-section {
+      display: none;
+      text-align: center;
+    }
+    
+    .thumbnail-container {
+      margin: 20px 0;
+      min-height: 200px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .thumbnail-container img {
+      max-width: 100%;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    #download-btn {
+      background-color: #4CAF50;
+      color: white;
+    }
+    
+    #download-btn:hover {
+      background-color: #45a049;
+    }
+    
+    #back-btn {
+      background-color: #2196F3;
+      color: white;
+    }
+    
+    #back-btn:hover {
+      background-color: #0b7dda;
+    }
+    
+    #error-message {
+      color: #ff0000;
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+      display: none;
+    }
+    
+    /* Loading Spinner */
+    .spinner-container {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top-color: #ff0000;
+      animation: spin 1s ease-in-out infinite;
+      margin: 0 auto;
+    }
+    
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .spinner-text {
+      margin-top: 10px;
+      color: #555;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1>YouTube Thumbnail Downloader</h1>
+  
+  <div class="container" id="main-container">
+    <div id="input-container">
+      <p>Enter the YouTube video URL to get its thumbnail:</p>
+      <div class="input-section">
+        <input type="text" id="video-url" placeholder="https://www.youtube.com/watch?v=..." />
+        <button id="get-thumbnail">Get Thumbnail</button>
+      </div>
+      <div id="error-message"></div>
+    </div>
+    
+    <!-- Loading Spinner -->
+    <div id="spinner-container" class="spinner-container">
+      <div class="spinner"></div>
+      <p class="spinner-text">Fetching thumbnail...</p>
+    </div>
+    
+    <div id="result-section">
+      <h2>Video Thumbnail</h2>
+      <div class="thumbnail-container">
+        <img id="thumbnail-img" src="" alt="YouTube Thumbnail" />
+      </div>
+      <div class="button-container">
+        <button id="download-btn">Download Thumbnail</button>
+        <button id="back-btn">Back</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const videoUrlInput = document.getElementById('video-url');
+      const getThumbnailBtn = document.getElementById('get-thumbnail');
+      const resultSection = document.getElementById('result-section');
+      const inputContainer = document.getElementById('input-container');
+      const thumbnailImg = document.getElementById('thumbnail-img');
+      const downloadBtn = document.getElementById('download-btn');
+      const backBtn = document.getElementById('back-btn');
+      const errorMessage = document.getElementById('error-message');
+      const spinnerContainer = document.getElementById('spinner-container');
+      
+      // Function to extract video ID from YouTube URL
+      function extractYouTubeVideoId(url) {
+        // Regular expression to match various YouTube URL formats
+        const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[1].length === 11) ? match[1] : null;
+      }
+      
+      // Function to validate YouTube URL
+      function isYouTubeUrl(url) {
+        return url.includes('youtube.com') || url.includes('youtu.be');
+      }
+      
+      // Function to get thumbnail and display it
+      function getThumbnail() {
+        const url = videoUrlInput.value.trim();
+        
+        // Reset error message
+        errorMessage.style.display = 'none';
+        
+        // Check if URL is from YouTube
+        if (!isYouTubeUrl(url)) {
+          errorMessage.textContent = 'Error: Please enter a valid YouTube URL.';
+          errorMessage.style.display = 'block';
+          return;
+        }
+        
+        // Extract video ID
+        const videoId = extractYouTubeVideoId(url);
+        
+        if (!videoId) {
+          errorMessage.textContent = 'Error: Could not extract video ID from the URL.';
+          errorMessage.style.display = 'block';
+          return;
+        }
+        
+        // Show loading spinner
+        inputContainer.style.display = 'none';
+        resultSection.style.display = 'none';
+        spinnerContainer.style.display = 'block';
+        
+        // Get highest quality thumbnail
+        const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+        
+        // Create a new image object to check if the high-quality thumbnail exists
+        const img = new Image();
+        img.onload = function() {
+          // Image loaded successfully, hide spinner and show result
+          spinnerContainer.style.display = 'none';
+          resultSection.style.display = 'block';
+          
+          // Show thumbnail
+          thumbnailImg.src = thumbnailUrl;
+          thumbnailImg.setAttribute('data-video-id', videoId);
+        };
+        
+        img.onerror = function() {
+          // Maxresdefault not available, try hqdefault instead
+          const fallbackUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+          thumbnailImg.src = fallbackUrl;
+          thumbnailImg.setAttribute('data-video-id', videoId);
+          
+          // Hide spinner and show result
+          spinnerContainer.style.display = 'none';
+          resultSection.style.display = 'block';
+        };
+        
+        // Start loading the image
+        img.src = thumbnailUrl;
+      }
+      
+      // Function to download thumbnail
+      function downloadThumbnail() {
+        const videoId = thumbnailImg.getAttribute('data-video-id');
+        const thumbnailUrl = thumbnailImg.src;
+        
+        // Create a temporary anchor element
+        const a = document.createElement('a');
+        a.href = thumbnailUrl;
+        a.download = `youtube-thumbnail-${videoId}.jpg`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+      
+      // Function to go back to input screen
+      function goBack() {
+        // Reset everything
+        videoUrlInput.value = '';
+        thumbnailImg.src = '';
+        errorMessage.style.display = 'none';
+        
+        // Show input, hide result and spinner
+        inputContainer.style.display = 'block';
+        resultSection.style.display = 'none';
+        spinnerContainer.style.display = 'none';
+      }
+      
+      // Event listeners
+      getThumbnailBtn.addEventListener('click', getThumbnail);
+      downloadBtn.addEventListener('click', downloadThumbnail);
+      backBtn.addEventListener('click', goBack);
+      
+      // Allow pressing Enter to get thumbnail
+      videoUrlInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          getThumbnail();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

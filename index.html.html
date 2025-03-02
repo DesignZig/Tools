@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools Grid</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a1a;
+            color: white;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: black;
+            position: relative;
+            margin-right: 10px;
+            overflow: hidden;
+        }
+
+        .logo-icon::before {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 4px;
+            left: 4px;
+            background: linear-gradient(135deg, #ff3366, #33ccff);
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 50%, 0 100%);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background-color: #252525;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.2s, background-color 0.2s;
+            cursor: pointer;
+            height: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            background-color: #2a2a2a;
+        }
+
+        .circle {
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            border-radius: 50%;
+            margin-bottom: 15px;
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .description {
+            font-size: 14px;
+            color: #bbbbbb;
+            line-height: 1.4;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: flex-end;
+            padding: 20px 0;
+        }
+
+        .footer-logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .color-d {
+            color: #ff3366;
+        }
+
+        .color-z {
+            color: #33ccff;
+        }
+
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 15px;
+            }
+
+            .circle {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon"></div>
+            Tools
+        </div>
+    </div>
+
+    <div class="grid-container" id="toolsGrid">
+        <!-- Cards will be dynamically inserted here -->
+    </div>
+
+    <div class="footer">
+        <div class="footer-logo">
+            <span class="color-d">D</span>esign<span class="color-z">Z</span>ig
+        </div>
+    </div>
+
+    <script>
+        // Tool data
+        const tools = [
+            {
+                name: "Framer",
+                description: "A no-code to make website fast, good for designers who want to make website on their own. Line 4 line 5"
+            }
+        ];
+
+        // Number of cards to display
+        const numCards = 8;
+
+        // Generate the grid
+        const toolsGrid = document.getElementById('toolsGrid');
+        
+        for (let i = 0; i < numCards; i++) {
+            const tool = tools[i % tools.length]; // Cycle through tools if needed
+            
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            card.innerHTML = `
+                <div class="circle"></div>
+                <div class="title">${tool.name}</div>
+                <div class="description">${tool.description}</div>
+            `;
+            
+            toolsGrid.appendChild(card);
+        }
+
+        // Make the grid responsive
+        function adjustGrid() {
+            const width = window.innerWidth;
+            const container = document.querySelector('.grid-container');
+            
+            if (width < 600) {
+                container.style.gridTemplateColumns = 'repeat(2, 1fr)';
+            } else if (width < 900) {
+                container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+            } else {
+                container.style.gridTemplateColumns = 'repeat(4, 1fr)';
+            }
+        }
+
+        // Initial adjustment and listen for resize
+        adjustGrid();
+        window.addEventListener('resize', adjustGrid);
+    </script>
+</body>
+</html>
