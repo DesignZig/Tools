@@ -10,9 +10,68 @@
       max-width: 800px;
       margin: 0 auto;
       padding: 20px;
-      background-color: #f9f9f9;
+      background-color: #1a1a1a;
     }
     
+     .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo:hover {
+            opacity: 0.9;
+        }
+
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: black;
+            position: relative;
+            margin-right: 10px;
+            overflow: hidden;
+        }
+
+        .logo-icon::before {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 4px;
+            left: 4px;
+            background: linear-gradient(135deg, #ff3366, #33ccff);
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 50%, 0 100%);
+        }
+
+
+.header span {
+    color: white; /* Make text white */
+    font-size: 18px; /* Adjust text size */
+    font-weight: bold;
+}
+
+        .footer {
+            display: flex;
+            justify-content: flex-end;
+            padding: 20px 0;
+            margin-top: auto;
+        }
+
+        .footer-logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
     h1 {
       text-align: center;
       color: #ff0000;
@@ -141,6 +200,12 @@
   </style>
 </head>
 <body>
+  <div class="header">
+    <a href="https://tools.designzig.com">
+             <img src="logos/designzig-mark.svg" alt="Logo">
+            <span>Explore more Tools</span>
+    </a>
+    </div>
   <h1>YouTube Thumbnail Downloader</h1>
   
   <div class="container" id="main-container">
@@ -166,10 +231,16 @@
       </div>
       <div class="button-container">
         <button id="download-btn">Download Thumbnail</button>
-        <button id="back-btn">Back</button>
+        <button id="back-btn">Get more</button>
       </div>
     </div>
   </div>
+    <div class="footer">
+        <div class="footer-logo">
+            <a href="https://designzig.com">
+            <img src="logos/designzig-logo.svg" alt="DesignZig Logo">
+        </a>
+        </div>
   
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -255,18 +326,28 @@
       }
       
       // Function to download thumbnail
-      function downloadThumbnail() {
-        const videoId = thumbnailImg.getAttribute('data-video-id');
-        const thumbnailUrl = thumbnailImg.src;
-        
-        // Create a temporary anchor element
-        const a = document.createElement('a');
-        a.href = thumbnailUrl;
-        a.download = `youtube-thumbnail-${videoId}.jpg`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }
+     function downloadThumbnail() {
+    const videoId = thumbnailImg.getAttribute('data-video-id');
+    const thumbnailUrl = thumbnailImg.src;
+
+    fetch(thumbnailUrl)
+        .then(response => response.blob()) // Convert to Blob
+        .then(blob => {
+            const blobUrl = URL.createObjectURL(blob);
+
+            // Create and trigger download
+            const a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = `youtube-thumbnail-${videoId}.jpg`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            // Revoke URL after download to free memory
+            URL.revokeObjectURL(blobUrl);
+        })
+        .catch(error => console.error("Error downloading thumbnail:", error));
+}
       
       // Function to go back to input screen
       function goBack() {
