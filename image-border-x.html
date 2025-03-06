@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BorderX - Add Borders to Screenshots</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4361ee30;
+            --primary-dark: #3a56e4;
+            --text: #333;
+            --background: #f8f9fa;
+            --card: #ffffff;
+            --border: #e0e0e0;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            background-color: var(--background);
+            line-height: 1.6;
+            padding: 0px;
+            display: column;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        header, footer {
+            background-color: #000;
+            color: #fff;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logo {
+            width: 36px;
+            height: 36px;
+            background-color: #fff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: #000;
+        }
+        
+        .logo-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .header-links a, .footer-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 16px;
+            transition: color 0.2s;
+        }
+        
+        .header-links a:hover, .footer-links a:hover {
+            color: #ccc;
+        }
+        
+        main {
+            flex: 1;
+            padding: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 0.8fr 1.2fr;
+            gap: 24px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .control-panel {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .preview-panel {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        h1 {
+            margin-bottom: 24px;
+            font-size: 2rem;
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+        
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        
+        .upload-area:hover {
+            border-color: #7c55fe;
+        }
+        
+        .upload-area p {
+            margin-top: 12px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .icon {
+            font-size: 32px;
+            color: #7c55fe;
+        }
+        
+        .control-group {
+            margin-bottom: 24px;
+        }
+        
+        .control-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .range-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        input[type="range"] {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            background: #ddd;
+            border-radius: 3px;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #7c55fe;
+            cursor: pointer;
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #7c55fe;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .range-value {
+            min-width: 48px;
+            text-align: center;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .color-picker {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+            border-radius: 50%;
+        }
+        
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 50%;
+        }
+        
+        .toggle-pills {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .pill {
+            padding: 8px 16px;
+            background-color: #f0f0f0;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .pill:hover {
+            background-color: #e6e6e6;
+        }
+        
+        .pill.active {
+            background-color: #7c55fe;
+            color: white;
+            border-color: #7c55fe;
+        }
+        
+        .premade-borders {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .border-option {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .border-option:hover {
+            transform: scale(1.05);
+        }
+        
+        .border-option.active {
+            outline: 3px solid #7c55fe;
+        }
+        
+        .border-option-inner {
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            width: 80%;
+            height: 80%;
+            background-color: #fff;
+            border-radius: 4px;
+        }
+        
+        .gradient-options {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .gradient-option {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .gradient-option:hover {
+            transform: scale(1.05);
+        }
+        
+        .gradient-option.active {
+            outline: 3px solid #7c55fe;
+        }
+        
+        #previewImg {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        #previewContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 500px;
+            position: relative;
+        }
+        
+        #downloadBtn {
+            margin-top: 24px;
+            padding: 12px 24px;
+            background-color: #7c55fe;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: none;
+        }
+        
+        #downloadBtn:hover {
+            background-color: #6544d1;
+        }
+        
+        .placeholder-text {
+            color: #999;
+            text-align: center;
+        }
+        
+        footer {
+            margin-top: auto;
+        }
+        
+        .custom-gradient-container {
+            margin-top: 12px;
+        }
+        
+        .gradient-color-pickers {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+            align-items: center;
+        }
+        
+        .gradient-color-picker {
+            display: flex;
+            align-items: center;
+        }
+        
+        .angle-control {
+            display: flex;
+            align-items: center;
+            margin-top: 12px;
+            gap: 8px;
+        }
+
+        .description-container {
+            max-width: 100%;
+            width: 100%;
+            background: var(--card);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+            margin-top: 40px;
+        }
+
+        .description-container h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .description-container h3 {
+            color: var(--primary-dark);
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        .description-container p {
+            margin-bottom: 16px;
+        }
+
+        .description-container blockquote {
+            border-left: 4px solid var(--primary-light);
+            padding-left: 16px;
+            margin: 16px 0;
+            font-style: italic;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <a href="https://tools.designzig.com">
+             <img src="logos/designzig-mark.svg" alt="Logo">
+            <span>Explore more Tools</span>
+    </a>
+    </header>
+
+    <main>
+        <h1>Add Borders to Your Screenshots</h1>
+        <div class="container">
+            <div class="control-panel">
+                <div id="uploadWrapper" class="upload-area">
+                    <div class="icon">📷</div>
+                    <p>Drag & drop your image here or click to browse</p>
+                    <input type="file" id="imageUpload" accept=".jpg,.jpeg,.png" style="display: none;">
+                </div>
+
+                <div id="controlsContainer" style="display: none;">
+                    <div class="control-group">
+                        <span class="control-label">Border Style</span>
+                        <div class="toggle-pills">
+                            <div class="pill active" data-style="solid">Solid</div>
+                            <div class="pill" data-style="gradient">Gradient</div>
+                        </div>
+                    </div>
+
+                    <div id="solidControls">
+                        <div class="control-group">
+                            <span class="control-label">Border Width</span>
+                            <div class="range-control">
+                                <input type="range" id="borderWidth" min="0" max="100" value="20">
+                                <span class="range-value" id="borderWidthValue">20px</span>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <span class="control-label">Border Color</span>
+                            <div class="color-picker">
+                                <input type="color" id="borderColor" value="#7c55fe">
+                                <span id="colorHex">#7c55fe</span>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <span class="control-label">Premade Borders</span>
+                            <div class="premade-borders">
+                                <div class="border-option active" style="background-color: #7c55fe;" data-color="#7c55fe">
+                                    <div class="border-option-inner"></div>
+                                </div>
+                                <div class="border-option" style="background-color: #ff5f5f;" data-color="#ff5f5f">
+                                    <div class="border-option-inner"></div>
+                                </div>
+                                <div class="border-option" style="background-color: #4cd964;" data-color="#4cd964">
+                                    <div class="border-option-inner"></div>
+                                </div>
+                                <div class="border-option" style="background-color: #ffcc00;" data-color="#ffcc00">
+                                    <div class="border-option-inner"></div>
+                                </div>
+                                <div class="border-option" style="background-color: #000000;" data-color="#000000">
+                                    <div class="border-option-inner"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="gradientControls" style="display: none;">
+                        <div class="control-group">
+                            <span class="control-label">Border Width</span>
+                            <div class="range-control">
+                                <input type="range" id="gradientBorderWidth" min="0" max="100" value="20">
+                                <span class="range-value" id="gradientBorderWidthValue">20px</span>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <span class="control-label">Gradient Presets</span>
+                            <div class="gradient-options">
+                                <div class="gradient-option active" style="background: linear-gradient(45deg, #7c55fe, #ff5f5f);" data-gradient="linear-gradient(45deg, #7c55fe, #ff5f5f)"></div>
+                                <div class="gradient-option" style="background: linear-gradient(45deg, #4cd964, #ffcc00);" data-gradient="linear-gradient(45deg, #4cd964, #ffcc00)"></div>
+                                <div class="gradient-option" style="background: linear-gradient(45deg, #00d2ff, #3a7bd5);" data-gradient="linear-gradient(45deg, #00d2ff, #3a7bd5)"></div>
+                                <div class="gradient-option" style="background: linear-gradient(45deg, #f857a6, #ff5858);" data-gradient="linear-gradient(45deg, #f857a6, #ff5858)"></div>
+                                <div class="gradient-option" style="background: linear-gradient(45deg, #ad5389, #3c1053);" data-gradient="linear-gradient(45deg, #ad5389, #3c1053)"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <span class="control-label">Custom Gradient</span>
+                            <div class="custom-gradient-container">
+                                <div class="gradient-color-pickers">
+                                    <div class="gradient-color-picker">
+                                        <input type="color" id="gradientColor1" value="#7c55fe">
+                                        <span>Color 1</span>
+                                    </div>
+                                    <div class="gradient-color-picker">
+                                        <input type="color" id="gradientColor2" value="#ff5f5f">
+                                        <span>Color 2</span>
+                                    </div>
+                                </div>
+                                <div class="angle-control">
+                                    <span>Angle:</span>
+                                    <div class="range-control">
+                                        <input type="range" id="gradientAngle" min="0" max="360" value="45">
+                                        <span class="range-value" id="gradientAngleValue">45°</span>
+                                    </div>
+                                </div>
+                                <div id="customGradientPreview" style="height: 30px; border-radius: 6px; margin-top: 8px; background: linear-gradient(45deg, #7c55fe, #ff5f5f);"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-panel">
+                <div id="previewContainer">
+                    <p class="placeholder-text">Upload an image to preview</p>
+                </div>
+                <button id="downloadBtn">Download Image</button>
+            </div>
+        </div>
+
+        <div class="description-container">
+        <h1>BorderX – The Perfect Finishing Touch for Your Images</h1>
+    <p>In an era where visuals speak louder than words, <span class="highlight">BorderX</span> is the ultimate tool to refine, enhance, and perfect your images. Simple yet powerful, BorderX lets you <strong>add beautifully designed borders</strong> to your images in just a few clicks—giving them a polished, professional edge.</p>
+    
+    <h2>Why BorderX?</h2>
+    <p>At its core, <strong>BorderX is about focus and clarity</strong>—giving your images structure without unnecessary complexity. Inspired by timeless design principles, it delivers a <strong>seamless, distraction-free</strong> experience.</p>
+    
+    <h2>Key Features</h2>
+    <ul>
+        <li><strong>Instant Uploads</strong> – Drag and drop your <strong>JPG or PNG</strong> images for immediate processing.</li>
+        <li><strong>Precision Control</strong> – Adjust the border thickness from <strong>0px to 100px</strong> with a smooth slider.</li>
+        <li><strong>Customization at Your Fingertips</strong> – Choose <strong>any color</strong> using the built-in color picker.</li>
+        <li><strong>Solid or Gradient Borders</strong> – Switch between a <strong>clean solid look</strong> or a <strong>modern gradient effect</strong>.</li>
+        <li><strong>One-Click Presets</strong> – Select from <strong>5 premade solid</strong> and <strong>5 premade gradient</strong> border styles.</li>
+        <li><strong>High-Quality Output</strong> – Your <strong>original resolution</strong> is <strong>preserved</strong>, ensuring crisp, clear images.</li>
+        <li><strong>Real-Time Preview</strong> – See your changes <strong>instantly</strong> before downloading.</li>
+        <li><strong>Seamless Download</strong> – Once you're satisfied, download the image with just a click.</li>
+    </ul>
+    
+    <h2>Effortless User Interface</h2>
+    <ul>
+        <li>🚀 <strong>Minimal & Intuitive</strong> – A clean, modern UI with <strong>zero clutter</strong>.</li>
+        <li>🖼️ <strong>Live Preview</strong> – No guesswork—what you see is what you get.</li>
+        <li>🎨 <strong>Visual Feedback</strong> – Every selection updates in real time for a fluid experience.</li>
+        <li>🌍 <strong>Fully Responsive</strong> – Works seamlessly on <strong>desktops, tablets, and mobile devices</strong>.</li>
+    </ul>
+    
+    <h2>Powered by Innovation</h2>
+    <p>BorderX is built with <strong>HTML5 Canvas</strong>, ensuring smooth performance while <strong>maintaining image quality</strong>. Instead of altering your original image, BorderX <strong>creates a new, enhanced version</strong> by layering it onto a dynamic canvas—allowing <strong>both solid and gradient borders</strong> without distortion.</p>
+    
+    <h2>How to Use BorderX</h2>
+    <ol class="steps">
+        <li><strong>Upload Your Image</strong> – Drag and drop or click to select a <strong>JPG or PNG file</strong>.</li>
+        <li><strong>Choose Border Type</strong> – Select <strong>Solid</strong> or <strong>Gradient</strong> using the pill toggle.</li>
+        <li><strong>Adjust Width</strong> – Use the slider to set your desired <strong>border thickness (0-100px)</strong>.</li>
+        <li><strong>Pick a Color</strong> – Choose any <strong>custom color</strong> or select from <strong>5 premade styles</strong>.</li>
+        <li><strong>Preview in Real Time</strong> – Instantly see your changes before saving.</li>
+        <li><strong>Download & Use</strong> – Click <strong>Download Image</strong> and enjoy your refined, professional-quality image.</li>
+    </ol>
+    
+    <h2>BorderX – Simplicity. Precision. Perfection.</h2>
+    <p>Ready to elevate your images? Try <span class="highlight">BorderX</span> now and add that perfect finishing touch with <strong>just a few clicks</strong>.</p>
+    </div>
+
+
+
+
+    </main>
+
+    <footer>
+        <div class="footer-logo">
+            <a href="https://designzig.com">
+            <img src="logos/designzig-logo.svg" alt="DesignZig Logo">
+        </a>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const imageUpload = document.getElementById('imageUpload');
+        const uploadWrapper = document.getElementById('uploadWrapper');
+        const controlsContainer = document.getElementById('controlsContainer');
+        const previewContainer = document.getElementById('previewContainer');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const borderWidth = document.getElementById('borderWidth');
+        const borderWidthValue = document.getElementById('borderWidthValue');
+        const borderColor = document.getElementById('borderColor');
+        const colorHex = document.getElementById('colorHex');
+        const gradientBorderWidth = document.getElementById('gradientBorderWidth');
+        const gradientBorderWidthValue = document.getElementById('gradientBorderWidthValue');
+        const solidControls = document.getElementById('solidControls');
+        const gradientControls = document.getElementById('gradientControls');
+        const stylePills = document.querySelectorAll('.pill');
+        const borderOptions = document.querySelectorAll('.border-option');
+        const gradientOptions = document.querySelectorAll('.gradient-option');
+        const gradientColor1 = document.getElementById('gradientColor1');
+        const gradientColor2 = document.getElementById('gradientColor2');
+        const gradientAngle = document.getElementById('gradientAngle');
+        const gradientAngleValue = document.getElementById('gradientAngleValue');
+        const customGradientPreview = document.getElementById('customGradientPreview');
+
+        // Variables
+        let originalImage = null;
+        let currentStyle = 'solid';
+        let currentBorderWidth = 20;
+        let currentBorderColor = '#7c55fe';
+        let currentGradient = 'linear-gradient(45deg, #7c55fe, #ff5f5f)';
+        let customGradientColor1 = '#7c55fe';
+        let customGradientColor2 = '#ff5f5f';
+        let customGradientAngle = 45;
+        let canvas = document.createElement('canvas');
+        let ctx = canvas.getContext('2d');
+        let isColorPickerActive = false;
+
+        // Event Listeners
+        uploadWrapper.addEventListener('click', () => {
+            imageUpload.click();
+        });
+
+        uploadWrapper.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadWrapper.style.borderColor = '#7c55fe';
+        });
+
+        uploadWrapper.addEventListener('dragleave', () => {
+            uploadWrapper.style.borderColor = '#ddd';
+        });
+
+        uploadWrapper.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadWrapper.style.borderColor = '#ddd';
+            
+            if (e.dataTransfer.files.length) {
+                handleImageUpload(e.dataTransfer.files[0]);
+            }
+        });
+
+        imageUpload.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleImageUpload(e.target.files[0]);
+            }
+        });
+
+        borderWidth.addEventListener('input', (e) => {
+            currentBorderWidth = parseInt(e.target.value);
+            borderWidthValue.textContent = `${currentBorderWidth}px`;
+            updatePreview();
+        });
+
+        gradientBorderWidth.addEventListener('input', (e) => {
+            currentBorderWidth = parseInt(e.target.value);
+            gradientBorderWidthValue.textContent = `${currentBorderWidth}px`;
+            updatePreview();
+        });
+
+        // Fix for color picker lag by using change event instead of input
+        borderColor.addEventListener('change', (e) => {
+            currentBorderColor = e.target.value;
+            colorHex.textContent = currentBorderColor;
+            updatePreview();
+        });
+
+        // Also update visual feedback when clicking on the color picker
+        borderColor.addEventListener('click', () => {
+            isColorPickerActive = true;
+        });
+
+        // Update when the color picker is closed
+        document.addEventListener('mousedown', (e) => {
+            if (isColorPickerActive && e.target !== borderColor) {
+                isColorPickerActive = false;
+                currentBorderColor = borderColor.value;
+                colorHex.textContent = currentBorderColor;
+                updatePreview();
+            }
+        });
+
+        downloadBtn.addEventListener('click', downloadImage);
+
+        // Custom Gradient Controls
+        gradientColor1.addEventListener('change', updateCustomGradient);
+        gradientColor2.addEventListener('change', updateCustomGradient);
+        gradientAngle.addEventListener('input', (e) => {
+            customGradientAngle = parseInt(e.target.value);
+            gradientAngleValue.textContent = `${customGradientAngle}°`;
+            updateCustomGradient();
+        });
+
+        function updateCustomGradient() {
+            customGradientColor1 = gradientColor1.value;
+            customGradientColor2 = gradientColor2.value;
+            
+            const newGradient = `linear-gradient(${customGradientAngle}deg, ${customGradientColor1}, ${customGradientColor2})`;
+            customGradientPreview.style.background = newGradient;
+            
+            // Deselect any active gradient presets
+            gradientOptions.forEach(o => o.classList.remove('active'));
+            
+            // Update the current gradient
+            currentGradient = newGradient;
+            
+            updatePreview();
+        }
+
+        // Style Toggle
+        stylePills.forEach(pill => {
+            pill.addEventListener('click', () => {
+                stylePills.forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+                currentStyle = pill.dataset.style;
+                
+                if (currentStyle === 'solid') {
+                    solidControls.style.display = 'block';
+                    gradientControls.style.display = 'none';
+                } else {
+                    solidControls.style.display = 'none';
+                    gradientControls.style.display = 'block';
+                }
+                
+                updatePreview();
+            });
+        });
+
+        // Border Options
+        borderOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                borderOptions.forEach(o => o.classList.remove('active'));
+                option.classList.add('active');
+                currentBorderColor = option.dataset.color;
+                borderColor.value = currentBorderColor;
+                colorHex.textContent = currentBorderColor;
+                updatePreview();
+            });
+        });
+
+        // Gradient Options
+        gradientOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                gradientOptions.forEach(o => o.classList.remove('active'));
+                option.classList.add('active');
+                currentGradient = option.dataset.gradient;
+                
+                // Parse the gradient to update the custom gradient controls
+                const match = currentGradient.match(/linear-gradient\(([^,]+),\s*([^,]+),\s*([^)]+)\)/);
+                if (match) {
+                    const angle = match[1];
+                    const color1 = match[2];
+                    const color2 = match[3];
+                    
+                    // Update angle
+                    if (angle.includes('deg')) {
+                        customGradientAngle = parseInt(angle);
+                        gradientAngle.value = customGradientAngle;
+                        gradientAngleValue.textContent = `${customGradientAngle}°`;
+                    }
+                    
+                    // Update colors
+                    gradientColor1.value = color1;
+                    gradientColor2.value = color2;
+                    customGradientColor1 = color1;
+                    customGradientColor2 = color2;
+                    
+                    // Update preview
+                    customGradientPreview.style.background = currentGradient;
+                }
+                
+                updatePreview();
+            });
+        });
+
+        // Functions
+        function handleImageUpload(file) {
+            if (!file.type.match('image/jpeg') && !file.type.match('image/png')) {
+                alert('Please upload a JPEG or PNG image');
+                return;
+            }
+
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    originalImage = img;
+                    controlsContainer.style.display = 'block';
+                    updatePreview();
+                    downloadBtn.style.display = 'block';
+                };
+                img.src = e.target.result;
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        function updatePreview() {
+            if (!originalImage) return;
+            
+            // Clear preview container
+            while (previewContainer.firstChild) {
+                previewContainer.removeChild(previewContainer.firstChild);
+            }
+            
+            // Create preview image
+            const previewImg = document.createElement('img');
+            previewImg.id = 'previewImg';
+            previewContainer.appendChild(previewImg);
+            
+            // Set canvas dimensions with border
+            const totalWidth = originalImage.width + (currentBorderWidth * 2);
+            const totalHeight = originalImage.height + (currentBorderWidth * 2);
+            canvas.width = totalWidth;
+            canvas.height = totalHeight;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw border
+            if (currentStyle === 'solid') {
+                ctx.fillStyle = currentBorderColor;
+                ctx.fillRect(0, 0, totalWidth, totalHeight);
+            } else {
+                // Create gradient border
+                const gradient = createGradientFromCSS(ctx, currentGradient, 0, 0, totalWidth, totalHeight);
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, totalWidth, totalHeight);
+            }
+            
+            // Draw original image on top of border
+            ctx.drawImage(originalImage, currentBorderWidth, currentBorderWidth);
+            
+            // Update preview image
+            previewImg.src = canvas.toDataURL('image/png');
+            previewImg.style.display = 'block';
+        }
+
+        function createGradientFromCSS(ctx, cssGradient, x, y, width, height) {
+            // Parse the CSS gradient string
+            const match = cssGradient.match(/linear-gradient\(([^,]+),\s*([^,]+),\s*([^)]+)\)/);
+            
+            if (match) {
+                const angle = match[1];
+                const color1 = match[2];
+                const color2 = match[3];
+                
+                let gradient;
+                
+                // Handle different angle formats
+                if (angle.includes('deg')) {
+                    const degrees = parseInt(angle);
+                    const radians = (degrees - 90) * (Math.PI / 180);
+                    const xEnd = Math.cos(radians) * width + x;
+                    const yEnd = Math.sin(radians) * height + y;
+                    gradient = ctx.createLinearGradient(x, y, xEnd, yEnd);
+                } else if (angle === '45deg') {
+                    gradient = ctx.createLinearGradient(0, 0, width, height);
+                } else {
+                    // Default to top-to-bottom gradient
+                    gradient = ctx.createLinearGradient(0, 0, 0, height);
+                }
+                
+                gradient.addColorStop(0, color1);
+                gradient.addColorStop(1, color2);
+                
+                return gradient;
+            }
+            
+            // Fallback
+            return '#7c55fe';
+        }
+
+        function downloadImage() {
+            if (!originalImage) return;
+            
+            const link = document.createElement('a');
+            link.download = 'bordered-image.png';
+            link.href = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+            link.click();
+        }
+    </script>
+</body>
+</html>
