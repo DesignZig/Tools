@@ -1,0 +1,30 @@
+**Aspect Ratio to Pixel Calculator: Precision Meets Elegance**
+
+### **Designing with Intent**
+At the heart of every great product is an unwavering commitment to simplicity and function. The **Aspect Ratio to Pixel Calculator** is not just another tool; it is a statement—a seamless fusion of clarity, precision, and usability.
+
+Designers, content creators, and developers live in a world where every pixel matters. Whether crafting cinematic experiences, optimizing UI layouts, or ensuring visual consistency, the balance between width and height is fundamental. The Aspect Ratio to Pixel Calculator elevates this process, offering an intuitive and elegant solution to an otherwise mundane task.
+
+### **Form Meets Function**
+Jony Ive once said, *"Simplicity is not the absence of clutter; it is the presence of order."* The calculator’s interface embodies this ethos. A clean, visually soothing layout presents users with predefined aspect ratios—16:9, 4:3, 1:1, 21:9, and 3:2—alongside the ability to customize their own.
+
+The interplay of soft, rounded buttons and subtle typography ensures a frictionless experience. Users select an aspect ratio, input a width, and the tool instantly computes the corresponding height.
+
+For added convenience, predefined resolutions—**1920 × 1080**, **1280 × 720**, and **3840 × 2160**—allow for instant selection, reducing friction and increasing efficiency. No more guesswork, no more cumbersome calculations.
+
+### **Human-Centric Engineering**
+Every feature is carefully considered, not simply for its functionality but for the way it complements human behavior.
+
+- **Effortless Copying**: With a single tap, users can copy dimensions to their clipboard, eliminating unnecessary clicks and distractions.
+- **Visual Preview**: A dynamic preview box provides real-time feedback, ensuring confidence in the chosen dimensions.
+- **Seamless Export**: A single click generates an image, allowing users to download the ratio in **PNG** or **JPG**, making it effortless to communicate designs.
+
+This is a tool designed for creators, by creators—where every touchpoint is intentional.
+
+### **Revolutionizing the Mundane**
+Steve Jobs believed that technology should enhance human potential, not burden it. This calculator isn’t just about numbers; it’s about empowering users to create with precision and ease.
+
+No unnecessary complexity. No feature bloat. Just pure, purposeful design.
+
+**Because every pixel should be perfect.**
+

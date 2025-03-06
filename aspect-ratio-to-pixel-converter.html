@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aspect Ratio to pixel Converter</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4361ee30;
+            --primary-dark: #3a56e4;
+            --text: #333;
+            --background: #f8f9fa;
+            --card: #ffffff;
+            --border: #e0e0e0;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            background-color: var(--background);
+            line-height: 1.6;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            max-width: 500px;
+            width: 100%;
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 24px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .aspect-ratio-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .aspect-ratio-buttons button {
+            padding: 10px 15px;
+            border: 1px solid var(--primary);
+            border-radius: 50px;
+            background: var(--card);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .aspect-ratio-buttons button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .aspect-ratio-buttons button.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .common-resolutions {
+            background-color: var(--primary-light);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+            font-size: 14px;
+            text-align: center;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .resolution-chip {
+            background: var(--card);
+            border: 1px solid var(--primary);
+            padding: 6px 12px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+
+        .resolution-chip:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .input-group label {
+            width: 120px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+            padding-right: 40px; /* Space for copy icon */
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .copy-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--primary);
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+        }
+
+        .copy-icon:hover {
+            color: var(--primary-dark);
+        }
+
+        .custom-ratio-container {
+            display: none;
+            gap: 10px;
+            margin: 16px 0;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .custom-ratio-container label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .custom-ratio-container input {
+            width: 80px;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .custom-ratio-container .ratio-divider {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .preview-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            border: 2px dashed var(--primary);
+            margin-top: 24px;
+            border-radius: 10px;
+            position: relative;
+            background-color: var(--primary-light);
+            overflow: hidden;
+        }
+
+        .preview-box {
+            background-color: var(--primary);
+            position: absolute;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .dimension-display {
+            display: none;
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            color: var(--text);
+        }
+
+        .preview-container:hover .dimension-display {
+            display: block;
+        }
+
+        .download-options {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .download-button {
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .download-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .download-button svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        .description-container {
+            max-width: 800px;
+            width: 100%;
+            background: var(--card);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+
+        .description-container h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .description-container h3 {
+            color: var(--primary-dark);
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        .description-container p {
+            margin-bottom: 16px;
+        }
+
+        .description-container blockquote {
+            border-left: 4px solid var(--primary-light);
+            padding-left: 16px;
+            margin: 16px 0;
+            font-style: italic;
+        }
+
+        .guide-container {
+            max-width: 800px;
+            width: 100%;
+            background: var(--card);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .guide-container h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .guide-container ol {
+            padding-left: 24px;
+            margin-bottom: 20px;
+        }
+
+        .guide-container li {
+            margin-bottom: 12px;
+        }
+
+        .guide-container .step-highlight {
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        @media (max-width: 600px) {
+            .container, .description-container, .guide-container {
+                padding: 20px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .input-group label {
+                margin-bottom: 8px;
+            }
+
+            .download-options {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Aspect Ratio to pixel Converter</h2>
+        <div class="aspect-ratio-buttons" id="aspectRatioContainer">
+            <button onclick="setAspectRatio('16:9', this)">16:9</button>
+            <button onclick="setAspectRatio('4:3', this)">4:3</button>
+            <button onclick="setAspectRatio('1:1', this)">1:1</button>
+            <button onclick="setAspectRatio('21:9', this)">21:9</button>
+            <button onclick="setAspectRatio('3:2', this)">3:2</button>
+            <button onclick="toggleCustomRatio(this)">Custom</button>
+        </div>
+        
+        <div class="custom-ratio-container" id="customRatioContainer">
+            <label>Width Ratio:</label>
+            <input type="number" id="customWidthRatio" placeholder="Width ratio" min="1" oninput="setCustomAspectRatio()">
+            <div class="ratio-divider">:</div>
+            <label>Height Ratio:</label>
+            <input type="number" id="customHeightRatio" placeholder="Height ratio" min="1" oninput="setCustomAspectRatio()">
+        </div>
+        
+        <div class="common-resolutions" id="commonResolutions"></div>
+        
+        <div class="input-group">
+            <label for="width">Width (px):</label>
+            <input type="number" id="width" placeholder="Enter width" min="1" oninput="calculateHeight()">
+            <button class="copy-icon" onclick="copyToClipboard('width')" title="Copy width">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="input-group">
+            <label for="height">Height (px):</label>
+            <input type="number" id="height" placeholder="Enter height" min="1" oninput="calculateWidth()">
+            <button class="copy-icon" onclick="copyToClipboard('height')" title="Copy height">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="preview-container">
+            <div id="previewBox" class="preview-box"></div>
+            <div class="dimension-display" id="dimensionDisplay"></div>
+        </div>
+
+        <div class="download-options">
+            <button class="download-button" onclick="downloadFrame('png')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download as PNG
+            </button>
+            <button class="download-button" onclick="downloadFrame('jpg')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download as JPG
+            </button>
+        </div>
+    </div>
+
+    <div class="guide-container">
+        <h2>How to Use This Tool</h2>
+        <ol>
+            <li><span class="step-highlight">Select an aspect ratio</span> - Choose from common presets (16:9, 4:3, etc.) or select "Custom" to define your own ratio.</li>
+            <li><span class="step-highlight">If using custom ratio</span> - Enter the width and height ratio values (e.g., 16 and 9).</li>
+            <li><span class="step-highlight">Enter dimensions</span> - Either:
+                <ul>
+                    <li>Input a width (in pixels) and the height will be calculated automatically</li>
+                    <li>Input a height (in pixels) and the width will be calculated automatically</li>
+                    <li>Click on one of the common resolution chips for instant preset dimensions</li>
+                </ul>
+            </li>
+            <li><span class="step-highlight">View the preview</span> - See a visual representation of your chosen dimensions.</li>
+            <li><span class="step-highlight">Copy dimensions</span> - Click the copy icon next to any input field to copy its value to your clipboard.</li>
+            <li><span class="step-highlight">Download</span> - Generate a PNG or JPG frame with your exact dimensions for reference.</li>
+        </ol>
+    </div>
+
+    <div class="description-container">
+        <h2>Aspect Ratio to Pixel Calculator: Precision Meets Elegance</h2>
+
+        <h3>Designing with Intent</h3>
+        <p>At the heart of every great product is an unwavering commitment to simplicity and function. The <strong>Aspect Ratio to Pixel Calculator</strong> is not just another tool; it is a statement—a seamless fusion of clarity, precision, and usability.</p>
+        <p>Designers, content creators, and developers live in a world where every pixel matters. Whether crafting cinematic experiences, optimizing UI layouts, or ensuring visual consistency, the balance between width and height is fundamental. The Aspect Ratio to Pixel Calculator elevates this process, offering an intuitive and elegant solution to an otherwise mundane task.</p>
+
+        <h3>Form Meets Function</h3>
+        <p>Jony Ive once said, <em>"Simplicity is not the absence of clutter; it is the presence of order."</em> The calculator's interface embodies this ethos. A clean, visually soothing layout presents users with predefined aspect ratios—16:9, 4:3, 1:1, 21:9, and 3:2—alongside the ability to customize their own.</p>
+        <p>The interplay of soft, rounded buttons and subtle typography ensures a frictionless experience. Users select an aspect ratio, input a width, and the tool instantly computes the corresponding height.</p>
+        <p>For added convenience, predefined resolutions—<strong>1920 × 1080</strong>, <strong>1280 × 720</strong>, and <strong>3840 × 2160</strong>—allow for instant selection, reducing friction and increasing efficiency. No more guesswork, no more cumbersome calculations.</p>
+
+        <h3>Human-Centric Engineering</h3>
+        <p>Every feature is carefully considered, not simply for its functionality but for the way it complements human behavior.</p>
+        <ul>
+            <li><strong>Effortless Copying</strong>: With a single tap, users can copy dimensions to their clipboard, eliminating unnecessary clicks and distractions.</li>
+            <li><strong>Visual Preview</strong>: A dynamic preview box provides real-time feedback, ensuring confidence in the chosen dimensions.</li>
+            <li><strong>Seamless Export</strong>: A single click generates an image, allowing users to download the ratio in <strong>PNG</strong> or <strong>JPG</strong>, making it effortless to communicate designs.</li>
+        </ul>
+        <p>This is a tool designed for creators, by creators—where every touchpoint is intentional.</p>
+
+        <h3>Revolutionizing the Mundane</h3>
+        <p>Steve Jobs believed that technology should enhance human potential, not burden it. This calculator isn't just about numbers; it's about empowering users to create with precision and ease.</p>
+        <p>No unnecessary complexity. No feature bloat. Just pure, purposeful design.</p>
+        <p><strong>Because every pixel should be perfect.</strong></p>
+    </div>
+
+    <div id="toast" class="toast"></div>
+    
+    <script>
+        // Common resolutions for different aspect ratios
+        const commonResolutions = {
+            "16:9": [
+                { width: 1920, height: 1080 }, // Full HD
+                { width: 1280, height: 720 },  // HD
+                { width: 3840, height: 2160 }  // 4K
+            ],
+            "4:3": [
+                { width: 1024, height: 768 },
+                { width: 800, height: 600 },
+                { width: 1600, height: 1200 }
+            ],
+            "1:1": [
+                { width: 1080, height: 1080 },
+                { width: 800, height: 800 },
+                { width: 1500, height: 1500 }
+            ],
+            "21:9": [
+                { width: 2560, height: 1080 },
+                { width: 3440, height: 1440 },
+                { width: 5120, height: 2160 }
+            ],
+            "3:2": [
+                { width: 1080, height: 720 },
+                { width: 1500, height: 1000 },
+                { width: 3000, height: 2000 }
+            ]
+        };
+
+        let selectedRatio = "16:9";
+        
+        // Initialize on load
+        window.onload = function() {
+            // Set default aspect ratio
+            const defaultButton = document.querySelector('.aspect-ratio-buttons button');
+            defaultButton.classList.add('active');
+            setAspectRatio('16:9', defaultButton);
+        };
+
+        function setAspectRatio(ratio, button) {
+            selectedRatio = ratio;
+            
+            // Update active button
+            document.querySelectorAll(".aspect-ratio-buttons button").forEach(btn => btn.classList.remove("active"));
+            button.classList.add("active");
+            
+            // Hide custom ratio inputs
+            document.getElementById("customRatioContainer").style.display = "none";
+            
+            // Show common resolutions
+            showCommonResolutions(ratio);
+            
+            // Set default resolution if inputs are empty
+            const widthInput = document.getElementById("width");
+            const heightInput = document.getElementById("height");
+            
+            if (!widthInput.value && !heightInput.value && commonResolutions[ratio]) {
+                const defaultResolution = commonResolutions[ratio][0];
+                widthInput.value = defaultResolution.width;
+                heightInput.value = defaultResolution.height;
+                updatePreview(defaultResolution.width, defaultResolution.height);
+            } else if (widthInput.value) {
+                calculateHeight();
+            } else if (heightInput.value) {
+                calculateWidth();
+            }
+        }
+
+        function showCommonResolutions(ratio) {
+            const container = document.getElementById("commonResolutions");
+            container.innerHTML = "";
+            
+            if (!commonResolutions[ratio]) {
+                container.style.display = "none";
+                return;
+            }
+            
+            container.style.display = "flex";
+            const resolutions = commonResolutions[ratio];
+            
+            resolutions.forEach(res => {
+                const chip = document.createElement("div");
+                chip.className = "resolution-chip";
+                chip.textContent = `${res.width} × ${res.height}`;
+                chip.onclick = function() {
+                    document.getElementById("width").value = res.width;
+                    document.getElementById("height").value = res.height;
+                    updatePreview(res.width, res.height);
+                }
+                container.appendChild(chip);
+            });
+        }
+
+        function toggleCustomRatio(button) {
+            document.querySelectorAll(".aspect-ratio-buttons button").forEach(btn => btn.classList.remove("active"));
+            button.classList.add("active");
+            
+            const customContainer = document.getElementById("customRatioContainer");
+            customContainer.style.display = "flex";
+            
+            // Clear common resolutions
+            document.getElementById("commonResolutions").innerHTML = "";
+            document.getElementById("commonResolutions").style.display = "none";
+        }
+
+        function setCustomAspectRatio() {
+            let widthRatio = document.getElementById("customWidthRatio").value;
+            let heightRatio = document.getElementById("customHeightRatio").value;
+            
+            if (widthRatio && heightRatio) {
+                selectedRatio = `${widthRatio}:${heightRatio}`;
+                
+                // If input fields are empty, set some default values
+                const widthInput = document.getElementById("width");
+                const heightInput = document.getElementById("height");
+                
+                if (!widthInput.value && !heightInput.value) {
+                    widthInput.value = widthRatio * 100;
+                    calculateHeight();
+                } else if (widthInput.value) {
+                    calculateHeight();
+                } else if (heightInput.value) {
+                    calculateWidth();
+                }
+            }
+        }
+
+        function getAspectRatioValues() {
+            return selectedRatio.split(":").map(Number);
+        }
+
+        function calculateHeight() {
+            let [wRatio, hRatio] = getAspectRatioValues();
+            let width = document.getElementById("width").value;
+            
+            if (width) {
+                let height = Math.round((width / wRatio) * hRatio);
+                document.getElementById("height").value = height;
+                updatePreview(width, height);
+            }
+        }
+
+        function calculateWidth() {
+            let [wRatio, hRatio] = getAspectRatioValues();
+            let height = document.getElementById("height").value;
+            
+            if (height) {
+                let width = Math.round((height / hRatio) * wRatio);
+                document.getElementById("width").value = width;
+                updatePreview(width, height);
+            }
+        }
+
+        function updatePreview(width, height) {
+            let previewBox = document.getElementById("previewBox");
+            let previewContainer = document.querySelector(".preview-container");
+            let dimensionDisplay = document.getElementById("dimensionDisplay");
+            
+            // Get container dimensions
+            let containerWidth = previewContainer.clientWidth - 40; // Padding
+            let containerHeight = previewContainer.clientHeight - 40; // Padding
+            
+            // Calculate the scale to fit within container
+            let scaleWidth = containerWidth / width;
+            let scaleHeight = containerHeight / height;
+            let scale = Math.min(scaleWidth, scaleHeight);
+            
+            // Apply the scale
+            let scaledWidth = width * scale;
+            let scaledHeight = height * scale;
+            
+            previewBox.style.width = scaledWidth + "px";
+            previewBox.style.height = scaledHeight + "px";
+            previewBox.textContent = `${width} × ${height}`;
+            
+            dimensionDisplay.textContent = `${width} × ${height} (${selectedRatio})`;
+        }
+
+        function copyToClipboard(fieldId) {
+            const field = document.getElementById(fieldId);
+            field.select();
+            document.execCommand('copy');
+            
+            // Show toast notification
+            const toast = document.getElementById('toast');
+            toast.textContent = `Copied: ${field.value}`;
+            toast.classList.add('show');
+            
+            // Hide toast after 2 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        function downloadFrame(format) {
+            const width = parseInt(document.getElementById('width').value);
+            const height = parseInt(document.getElementById('height').value);
+            
+            if (!width || !height) {
+                const toast = document.getElementById('toast');
+                toast.textContent = 'Please enter width and height values';
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2000);
+                return;
+            }
+            
+            // Create canvas
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            
+            // Fill with color (same as preview box)
+            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary');
+            ctx.fillRect(0, 0, width, height);
+            
+            // Add text showing dimensions
+            ctx.fillStyle = 'white';
+            ctx.font = `${Math.max(16, Math.min(width, height) / 20)}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(`${width} × ${height}`, width / 2, height / 2);
+            
+            // Convert canvas to data URL and trigger download
+            const dataURL = format === 'png' ? 
+                canvas.toDataURL('image/png') : 
+                canvas.toDataURL('image/jpeg', 0.9);
+            
+            // Create download link
+            const link = document.createElement('a');
+            link.download = `frame-${width}x${height}.${format}`;
+            link.href = dataURL;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Show toast notification
+            const toast = document.getElementById('toast');
+            toast.textContent = `Downloading ${width}×${height} ${format.toUpperCase()} frame`;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
