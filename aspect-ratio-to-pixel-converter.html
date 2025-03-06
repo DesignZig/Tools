@@ -35,6 +35,71 @@
             min-height: 100vh;
         }
 
+.header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo:hover {
+            opacity: 0.9;
+        }
+
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: black;
+            position: relative;
+            margin-right: 10px;
+            overflow: hidden;
+        }
+
+        .logo-icon::before {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 4px;
+            left: 4px;
+            background: linear-gradient(135deg, #ff3366, #33ccff);
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 50%, 0 100%);
+        }
+
+
+
+.header span {
+    color: black; /* Make text white */
+    font-size: 18px; /* Adjust text size */
+    font-weight: bold;
+}
+
+        .footer {
+            background-color: black;
+            display: flex;
+            justify-content: flex-end;
+            padding: 20px 0;
+            margin-top: auto;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+
+        .footer-logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+
+
         .container {
             background: var(--card);
             padding: 32px;
@@ -361,6 +426,13 @@
     </style>
 </head>
 <body>
+    <div class="header">
+    <a href="https://tools.designzig.com">
+             <img src="logos/designzig-mark.svg" alt="Logo">
+            <span>Explore more Tools</span>
+    </a>
+    </div>
+
     <div class="container">
         <h2>Aspect Ratio to pixel Converter</h2>
         <div class="aspect-ratio-buttons" id="aspectRatioContainer">
@@ -475,6 +547,13 @@
     </div>
 
     <div id="toast" class="toast"></div>
+
+    <div class="footer">
+        <div class="footer-logo">
+            <a href="https://designzig.com">
+            <img src="logos/designzig-logo.svg" alt="DesignZig Logo">
+        </a>
+        </div>
     
     <script>
         // Common resolutions for different aspect ratios
