@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - DesignZig Tools & Websites</title>
+    <meta name="description" content="Page not found - DesignZig Collection">
+    <meta property="og:title" content="Page Not Found - DesignZig Collection">
+    <meta property="og:description" content="The page you're looking for doesn't exist">
+    <meta property="og:image" content="./logos/designzig_collection.png">
+    <meta property="og:url" content="https://collections.designzig.com/404">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="./assets/designzig_favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="./assets/designzig_icon.png">
+    <link rel="stylesheet" href="./styles/main.css">
+    <style>
+        .error-container {
+            text-align: center;
+            padding: 60px 0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .error-code {
+            font-size: 120px;
+            font-weight: bold;
+            color: var(--primary-color);
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+        
+        .error-message {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: var(--dark-color);
+        }
+        
+        .error-description {
+            color: var(--secondary-color);
+            margin-bottom: 40px;
+        }
+        
+        .error-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: background-color var(--transition-speed), transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--hover-color);
+        }
+        
+        .btn-secondary {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e9ecef;
+        }
+        
+        .popular-links {
+            margin-top: 50px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .popular-links h3 {
+            margin-bottom: 15px;
+            color: var(--dark-color);
+        }
+        
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .link-item {
+            padding: 10px;
+            border-radius: 5px;
+            background-color: var(--light-color);
+            transition: background-color var(--transition-speed);
+        }
+        
+        .link-item:hover {
+            background-color: #e9ecef;
+        }
+        
+        @media (max-width: 768px) {
+            .error-code {
+                font-size: 100px;
+            }
+            
+            .error-message {
+                font-size: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .links-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .error-code {
+                font-size: 80px;
+            }
+            
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8T81XZP83G"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-8T81XZP83G');
+</script>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="logo-container">
+                <a href="http://collections.designzig.com">
+                    <img src="./logos/designzig_collection.svg" alt="Collection Logo" class="logo">
+                </a>
+            </div>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search...">
+                <button id="searchButton">Search</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="section-container">
+            <div class="container">
+                <div class="error-container">
+                    <div class="error-icon">🔍</div>
+                    <div class="error-code">404</div>
+                    <h1 class="error-message">Page Not Found</h1>
+                    <p class="error-description">The page you're looking for doesn't exist or has been moved. Don't worry, we've got plenty of other great tools and resources for you to explore.</p>
+                    
+                    <div class="action-buttons">
+                        <a href="/" class="btn btn-primary">Back to Home</a>
+                        <a href="contact.html" class="btn btn-secondary">Contact Us</a>
+                    </div>
+                    
+                    <div class="popular-links">
+                        <h3>Popular Categories</h3>
+                        <div class="links-grid" id="popularCategories">
+                            <a href="category.html?category=ai" class="link-item">AI Tools</a>
+                            <a href="category.html?category=design" class="link-item">Design</a>
+                            <a href="category.html?category=productivity" class="link-item">Productivity</a>
+                            <a href="category.html?category=development" class="link-item">Development</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <a href="https://designzig.com">
+                        <img src="./logos/designzig.svg" alt="Collection Logo" class="logo">
+                    </a>
+                </div>
+                <div class="footer-links">
+                    <a href="about.html">About</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="privacy.html">Privacy Policy</a>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 DesignZIG. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./js/data.js"></script>
+    <script>
+        // Optional: You could dynamically load popular categories from your data
+        document.addEventListener('DOMContentLoaded', function() {
+            // If you have the categories data loaded from data.js
+            // You could populate the popular categories here
+            
+            const searchButton = document.getElementById('searchButton');
+            const searchInput = document.getElementById('searchInput');
+            
+            searchButton.addEventListener('click', function() {
+                if (searchInput.value.trim() !== '') {
+                    window.location.href = `search.html?q=${encodeURIComponent(searchInput.value.trim())}`;
+                }
+            });
+            
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && searchInput.value.trim() !== '') {
+                    window.location.href = `search.html?q=${encodeURIComponent(searchInput.value.trim())}`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
